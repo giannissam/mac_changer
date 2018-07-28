@@ -4,8 +4,6 @@ import subprocess
 import optparse
 import re
 
-#parses command line arguments and adds -h to output based on add_option options
-
 def get_arguments():
     parser = optparse.OptionParser()
     parser.add_option("-i", "--interface", dest="interface", help="Interface to change its MAC address")
