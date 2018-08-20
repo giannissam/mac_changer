@@ -4,7 +4,9 @@ import subprocess
 import optparse
 import re
 
+
 def get_arguments():
+    # Parse the arguments
     parser = optparse.OptionParser()
     parser.add_option("-i", "--interface", dest="interface", help="Interface to change its MAC address")
     parser.add_option("-m", "--mac", dest="new_mac", help="New MAC address")
@@ -15,27 +17,35 @@ def get_arguments():
         parser.error("[-] Please specify a new MAC address, use --help for more info")
     return options
 
+
 def change_mac(interface, new_mac):
+    # Change the MAC address of interface to new_mac
     print("[+] Changing MAC address for " + interface + " to " + new_mac)
     subprocess.call(["ifconfig", interface, "down"])
     subprocess.call(["ifconfig", interface, "hw", "ether", new_mac])
     subprocess.call(["ifconfig", interface, "up"])
 
+
 def get_current_mac(interface):
+    # return the current MAC address of the interface
     ifconfig_result = subprocess.check_output(["ifconfig", interface])
-    mac_address_search_result = re.search(r"\w\w:\w\w:\w\w:\w\w:\w\w:\w\w",
-                                          ifconfig_result)  # the rule is from Pythex.org
+    mac_address_search_result = re.search(r"\w\w:\w\w:\w\w:\w\w:\w\w:\w\w", ifconfig_result)
     if mac_address_search_result:
         return mac_address_search_result.group(0)
     else:
         print("[-] could not read MAC address.")
 
+# Get the arguments
 options = get_arguments()
+
+# Show the current MAC
 current_mac = get_current_mac(options.interface)
 print("Current MAC = " + str(current_mac))
 
+# Change the MAC address of the requested interface to the requested MAC
 change_mac(options.interface, options.new_mac)
 
+# Check if MAC changed properly
 current_mac = get_current_mac(options.interface)
 if current_mac == options.new_mac:
     print("[+] MAC address was succesfully changed to " + current_mac)
